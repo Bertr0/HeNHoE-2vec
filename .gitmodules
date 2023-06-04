@@ -1,0 +1,3 @@
+[submodule "Multilayer-networks-library"]
+	path = Multilayer-networks-library
+	url = git@github.com:bolozna/Multilayer-networks-library.git
