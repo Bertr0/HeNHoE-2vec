@@ -3,12 +3,25 @@ import numpy as np
 def alias_setup(probs):
     '''
 	Compute utility lists for non-uniform sampling from discrete distributions.
+
 	Refer to https://lips.cs.princeton.edu/the-alias-method-efficient-sampling-with-many-discrete-outcomes/
-	for details.
+	and https://en.wikipedia.org/wiki/Alias_method for details.
+
+    Parameters
+    ----------
+    probs : list of floats
+        The discrete probability distribution to sample from.
+
+    Returns
+    -------
+    J : list of ints
+        The alias table.
+    q : list of floats
+        The probability table.
 	'''
     K = len(probs)
     q = np.zeros(K)
-    J = np.zeros(K, dtype=np.int)
+    J = np.zeros(K, dtype=int)
 
     # Sort the data into the outcomes with probabilities
     # that are larger and smaller than 1/K.
@@ -42,6 +55,18 @@ def alias_setup(probs):
 def alias_draw(J, q):
     '''
 	Draw a sample from a non-uniform discrete distribution using alias sampling.
+
+    Parameters
+    ----------
+    J : list of ints
+        The alias table.
+    q : list of floats
+        The probability table.
+
+    Returns
+    -------
+    int
+        A sample from the discrete probability distribution. 
 	'''
     K = len(J)
 

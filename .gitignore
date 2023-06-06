@@ -177,3 +177,6 @@ pyrightconfig.json
 
 # .DS_Store
 *.DS_Store
+
+# File used for debugging and testing
+napkin.py
