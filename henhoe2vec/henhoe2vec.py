@@ -1,7 +1,8 @@
 import numpy as np
 import py3plex
 
-class HenHoe2vec():
+
+class HenHoe2vec:
     """
     A class to generate HeNHoE-2vec random walks over a heterogeneous-node
     homogeneous-edge network.
@@ -25,6 +26,7 @@ class HenHoe2vec():
         Transition probability distribution to neighbors of each node based on edge
         weights, p, q, and switching parameters.
     """
+
     def __init__(self, henhoe_network, is_directed, p, q, s):
         """
         Constructor for the HenHoe2vec class.
@@ -62,8 +64,8 @@ class HenHoe2vec():
         """
         self.N = henhoe_network
         self.is_directed = is_directed
-        self.p = p   # Return parameter
-        self.q = q   # In-out parameter
+        self.p = p  # Return parameter
+        self.q = q  # In-out parameter
 
         # Transition probability distribution to neighbors of each node based only on
         # edge weights and switching parameters. Only used for first step of each walk
@@ -74,9 +76,9 @@ class HenHoe2vec():
         # weights, p, q, and switching parameters. Used for all other steps of the walk.
         # Form: {(node1, node2) : (J, q)}
         self.transition_probs_edges = {}
-        
+
         if type(s) in [float, int]:
-            self.s = {"default" : s}
+            self.s = {"default": s}
         elif type(s) == dict:
             self.s = s
         else:
@@ -84,7 +86,6 @@ class HenHoe2vec():
                 f"[ERROR]: Invalid type for argument s. Should be float or dict but"
                 f" is {type(s)}."
             )
-        
 
     def henhoe2vec_walk(self, walk_length, start_node):
         """
@@ -103,7 +104,6 @@ class HenHoe2vec():
             Random walk of length `walk_length` starting at `start_node`.
         """
 
-    
     def preprocess_transition_probs(self):
         """
         Preprocessing of transition probabilities for guiding the random walks.
@@ -113,5 +113,3 @@ class HenHoe2vec():
 
         transition_probs_nodes = {}
         transition_probs_edges = {}
-
-        for 
