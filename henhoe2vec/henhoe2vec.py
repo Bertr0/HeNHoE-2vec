@@ -1,4 +1,4 @@
-import numpy as np
+from random import shuffle
 from alias_sampling import alias_setup, alias_draw
 
 
@@ -81,9 +81,14 @@ class HenHoe2vec:
             self.s = {"default": s}
         elif type(s) == dict:
             self.s = s
+            if not "default" in self.s:
+                raise ValueError(
+                    f"[ERROR] The dict of switching parameters s must contain a"
+                    f" 'default' entry."
+                )
         else:
             raise TypeError(
-                f"[ERROR]: Invalid type for argument s. Should be float or dict but"
+                f"[ERROR] Invalid type for argument s. Should be float or dict but"
                 f" is {type(s)}."
             )
 
@@ -131,6 +136,34 @@ class HenHoe2vec:
 
         return walk
 
+    def simulate_walks(self, num_walks, walk_length):
+        """
+        Simulate `num_walks` random walks of length `walk_length` for each node.
+
+        Parameters
+        ----------
+        num_walks : int
+            Number of random walks to simulate for each node.
+        walk_length : int
+            Length of each random walk.
+
+        Returns
+        -------
+        list of list of 2-tuples of strs
+            List of random walks.
+        """
+        N = self.N
+        nodes = N.nodes
+        walks = []
+
+        for _ in range(num_walks):
+            shuffle(nodes)  # Shuffle nodes so we don't always have the same order
+            for node in nodes:
+                walk = self.henhoe2vec_walk(walk_length=walk_length, start_node=node)
+                walks.append(walk)
+
+        return walks
+
     def get_node_trans_probs(self, node):
         """
         Using alias sampling, calculate the discrete transition probability distribution
@@ -162,10 +195,17 @@ class HenHoe2vec:
             if src_layer == trgt_layer:
                 unnormalized_probs.append(weight)
             else:
+                # Get switching parameter
                 if (src_layer, trgt_layer) in s:
                     switch_param = s[(src_layer, trgt_layer)]
                 else:
-                    switch_param = s["default"]
+                    try:
+                        switch_param = s["default"]
+                    except:
+                        raise ValueError(
+                            f"[ERROR] The dict of switching parameters s must contain a"
+                            f" 'default' entry."
+                        )
                 unnormalized_probs.append(weight / switch_param)
 
         # Normalization constant
@@ -220,10 +260,13 @@ class HenHoe2vec:
             # Neighbor is on a different layer
             else:
                 # Get switching parameter
-                if (src_layer, trgt_layer) in s:
-                    switch_param = s[(src_layer, trgt_layer)]
-                else:
+                try:
                     switch_param = s["default"]
+                except:
+                    raise ValueError(
+                        f"[ERROR] The dict of switching parameters s must contain a"
+                        f" 'default' entry."
+                    )
 
                 if nbr == previous:
                     unnormalized_probs.append(weight / (p * switch_param))  # Return
