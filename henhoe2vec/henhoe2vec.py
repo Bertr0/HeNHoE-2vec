@@ -89,20 +89,47 @@ class HenHoe2vec:
 
     def henhoe2vec_walk(self, walk_length, start_node):
         """
-        Simulate a random walk starting from `start_node`.
+        Simulate a random walk of length `walk_length` starting from `start_node`.
 
         Parameters
         ----------
         walk_length : int
             Length of the random walk.
-        start_node : NetworkX node
-            Starting node of the random walk.
+        start_node : 2-tuple of strs
+            Starting node of the random walk, e.g., ('n1','l1').
 
         Returns
         -------
-        list of NetworkX nodes
-            Random walk of length `walk_length` starting at `start_node`.
+        list of 2-tuples of strs (nodes)
+            Random walk of length `walk_length` starting from `start_node`.
         """
+        N = self.N
+        transition_probs_nodes = self.transition_probs_nodes
+        transition_probs_edges = self.transition_probs_edges
+
+        walk = [start_node]
+
+        while len(walk) < walk_length:
+            current = walk[-1]
+            neighbors = sorted(N.neighbors(current))
+            if len(neighbors) > 0:
+                # First step of the walk
+                if len(walk) == 1:
+                    J = transition_probs_nodes[current][0]
+                    q = transition_probs_nodes[current][1]
+                    next = neighbors[alias_draw(J, q)]
+                    walk.append(next)
+                # All other steps of the walk
+                else:
+                    previous = walk[-2]
+                    J = transition_probs_edges[(previous, current)][0]
+                    q = transition_probs_edges[(previous, current)][1]
+                    next = neighbors[alias_draw(J, q)]
+                    walk.append(next)
+            else:
+                break
+
+        return walk
 
     def get_node_trans_probs(self, node):
         """
@@ -112,7 +139,7 @@ class HenHoe2vec:
 
         Parameters
         ----------
-        node : 2-tuple of str
+        node : 2-tuple of strs
             Node for which to get the transition probabilities, e.g., ('n1','l1').
 
         Returns
@@ -157,9 +184,9 @@ class HenHoe2vec:
 
         Parameters
         ----------
-        previous : 2-tuple of str
+        previous : 2-tuple of strs
             Previous node on the random walk, e.g., ('n1','l1').
-        current : 2-tuple of str
+        current : 2-tuple of strs
             Current node on the random walk for which we want to calculate the
             transition probabilities to its neighbors, e.g., ('n2','l1').
 
