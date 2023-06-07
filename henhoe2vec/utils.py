@@ -50,7 +50,9 @@ def parse_multilayer_edgelist(multiedgelist, directed):
 
             G.add_node((source, source_layer), layer=source_layer)
             G.add_node((target, target_layer), layer=target_layer)
-            G.add_edge((source, source_layer), (target, target_layer), weight=weight)
+            G.add_edge(
+                (source, source_layer), (target, target_layer), weight=float(weight)
+            )
 
     return G
 

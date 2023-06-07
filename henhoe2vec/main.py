@@ -1,7 +1,7 @@
 import argparse
 import time
 from utils import parse_multilayer_edgelist
-from henhoe2vec import henhoe2vec
+import henhoe2vec
 import embeddings
 
 
@@ -122,14 +122,14 @@ def parse_switching_param(s, default_s):
     if len(s) == 1:
         if default_s:
             print(f"[WARNING] Both s and default-s were set. Using s: {s[0]}")
-        return s[0]
+        return float(s[0])
     else:
         switching_dict = {}
         while len(s) > 0:
             triple = s[:3]
             s = s[3:]
             try:
-                switching_dict[(triple[0], triple[1])] = triple[2]
+                switching_dict[(triple[0], triple[1])] = float(triple[2])
             except:
                 raise ValueError(
                     f"[ERROR] Argument --s has the wrong form. Should be a single float"
