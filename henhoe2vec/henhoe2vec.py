@@ -1,6 +1,4 @@
 from gensim.models import word2vec as w2v
-import pandas as pd
-from pathlib import Path
 
 from utils import emb_to_pandas, clean_output_directory
 
