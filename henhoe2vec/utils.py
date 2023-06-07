@@ -9,7 +9,7 @@ from pathlib import Path
 # --------------------------------------------------------------------------------------
 def parse_multilayer_edgelist(multiedgelist, directed):
     """
-    Converts a multilayer edge list into a NetworkX Graph.
+    Convert a multilayer edge list into a NetworkX Graph.
 
     Parameters
     ----------
@@ -60,7 +60,7 @@ def parse_multilayer_edgelist(multiedgelist, directed):
 # --------------------------------------------------------------------------------------
 def timed_invoke(action_desc, method):
     """
-    Invokes a method with timing.
+    Invoke a method with timing.
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ def timed_invoke(action_desc, method):
 
 def emb_to_pandas(emb_file):
     """
-    Converts an embedding file, as output from a trained word2vec model, to a pandas
+    Convert an embedding file, as output from a trained word2vec model, to a pandas
     DataFrame.
 
     Parameters
@@ -110,7 +110,7 @@ def emb_to_pandas(emb_file):
 
 def clean_output_directory(dir_path):
     """
-    Checks if output directory exists, otherwise it is created.
+    Check if output directory exists, otherwise created it.
 
     Parameters
     ----------
