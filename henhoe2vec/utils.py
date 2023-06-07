@@ -1,9 +1,11 @@
 import networkx as nx
 import time
+import pandas as pd
+from pathlib import Path
 
 
 # --------------------------------------------------------------------------------------
-# PARSING AND CONVERSION FOR MULTILAYER GRAPHS
+# PARSING AND CONVERSION FOR MULTILAYER NETWORKS
 # --------------------------------------------------------------------------------------
 def parse_multilayer_edgelist(multiedgelist, directed):
     """
@@ -81,3 +83,49 @@ def timed_invoke(action_desc, method):
     except Exception:
         print(f"Exception while {action_desc} after {int(time.time() - start)} seconds")
         raise
+
+
+def emb_to_pandas(emb_file):
+    """
+    Converts an embedding file, as output from a trained word2vec model, to a pandas
+    DataFrame.
+
+    Parameters
+    ----------
+    emb_file : str
+        Absolute path of the word2vec embedding file.
+
+    Returns
+    -------
+    pandas DataFrame
+        word2vec embedding as a dataframe.
+    """
+    embedding = pd.read_csv(
+        emb_file, delim_whitespace=True, skiprows=1, header=None, index_col=0
+    )
+    embedding.sort_index(inplace=True)
+
+    return embedding
+
+
+def clean_output_directory(dir_path):
+    """
+    Checks if output directory exists, otherwise it is created.
+
+    Parameters
+    ----------
+    dir_path : str
+        Path of the output directory.
+
+    Returns
+    -------
+    str
+        Absolute path of the output directory.
+    """
+    directory = Path(dir_path)
+    if directory.is_dir():
+        return str(directory)
+    else:
+        directory.mkdir()
+        print(f"Created output directory {directory}.")
+        return str(directory)
