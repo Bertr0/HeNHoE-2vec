@@ -24,6 +24,15 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--edges-are-distance",
+        action="store_true",
+        help=(
+            "Pass this argument if edge weights indicate distance between nodes"
+            " (opposed to weight/similarity)."
+        ),
+    )
+
+    parser.add_argument(
         "--output_dir",
         type=str,
         help="Path of the output directory where the embedding files will be saved.",
@@ -151,6 +160,7 @@ def main(
     input_csv,
     output_dir,
     is_directed=False,
+    edges_are_distance=False,
     dims=128,
     walk_length=20,
     num_walks=10,
@@ -174,6 +184,9 @@ def main(
         Path of the output directory where the embedding files will be saved.
     is_directed : bool
         Whether the network is directed. Default is False.
+    edges_are_distance : bool
+        Whether edge weights indicate distance between nodes (opposed to
+        weight/similarity). Default is False.
     dims : int
         The dimensionality of the embeddings. Default is 128.
     walk_length : int
@@ -213,10 +226,14 @@ def main(
     if verbose:
         N_nx = utils.timed_invoke(
             "parsing edgelist",
-            lambda: utils.parse_multilayer_edgelist(input_csv, is_directed),
+            lambda: utils.parse_multilayer_edgelist(
+                input_csv, is_directed, edges_are_distance
+            ),
         )
     else:
-        N_nx = utils.parse_multilayer_edgelist(input_csv, is_directed)
+        N_nx = utils.parse_multilayer_edgelist(
+            input_csv, is_directed, edges_are_distance
+        )
 
     # Create HenHoe2vec object
     hh2v = henhoe2vec_walks.HenHoe2vec(N_nx, is_directed, p, q, s)
@@ -268,6 +285,7 @@ if __name__ == "__main__":
         input_csv=args.input,
         output_dir=args.output_dir,
         is_directed=args.is_directed,
+        edges_are_distance=args.edges_are_distance,
         dims=args.dimensions,
         walk_length=args.walk_length,
         num_walks=args.num_walks,

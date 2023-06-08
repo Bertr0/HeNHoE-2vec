@@ -7,7 +7,7 @@ from pathlib import Path
 # --------------------------------------------------------------------------------------
 # PARSING AND CONVERSION FOR MULTILAYER NETWORKS
 # --------------------------------------------------------------------------------------
-def parse_multilayer_edgelist(multiedgelist, directed):
+def parse_multilayer_edgelist(multiedgelist, directed, edges_are_distance=False):
     """
     Convert a multilayer edge list into a NetworkX Graph.
 
@@ -19,6 +19,9 @@ def parse_multilayer_edgelist(multiedgelist, directed):
         'target', 'target_layer', 'weight'.
     directed : bool
         Whether the network is directed or not.
+    edges_are_distance : bool
+        Whether edge weights indicate distance between nodes (opposed to
+        weight/similarity). If network is unweighted, set to False. Default is False.
 
     Returns
     -------
@@ -26,7 +29,8 @@ def parse_multilayer_edgelist(multiedgelist, directed):
         Multilayer network parsed from the passed in edge list. Nodes are tuples of the
         form ('n','l') where 'n' is the name of the node and 'l' is the layer it belongs
         to. Every node additionally has an attribute 'layer' which denotes its layer.
-        Edges have an attribute 'weight'.
+        Edges have an attribute 'weight'. If the edge attribute of the input graph is
+        'distance', distances are converted to 'weights' through distance/1.
     """
     if directed:
         G = nx.DiGraph()
@@ -48,11 +52,14 @@ def parse_multilayer_edgelist(multiedgelist, directed):
                     f" 'target_layer', 'weight'."
                 )
 
+            if edges_are_distance:
+                weight = 1 / float(weight)
+            else:
+                weight = float(weight)
+
             G.add_node((source, source_layer), layer=source_layer)
             G.add_node((target, target_layer), layer=target_layer)
-            G.add_edge(
-                (source, source_layer), (target, target_layer), weight=float(weight)
-            )
+            G.add_edge((source, source_layer), (target, target_layer), weight=weight)
 
     return G
 
