@@ -118,18 +118,18 @@ def clean_output_directory(dir_path):
 
     Parameters
     ----------
-    dir_path : str
+    dir_path : str or pathlib.Path
         Path of the output directory.
 
     Returns
     -------
-    str
+    pathlib.Path object
         Absolute path of the output directory.
     """
     directory = Path(dir_path)
     if directory.is_dir():
-        return str(directory)
+        return directory
     else:
         directory.mkdir()
         print(f"Created output directory {directory}.")
-        return str(directory)
+        return directory

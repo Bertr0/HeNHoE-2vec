@@ -1,4 +1,4 @@
-from random import shuffle
+import random
 from alias_sampling import alias_setup, alias_draw
 
 
@@ -151,11 +151,11 @@ class HenHoe2vec:
             List of random walks.
         """
         N = self.N
-        nodes = N.nodes
+        nodes = list(N.nodes)
         walks = []
 
         for _ in range(num_walks):
-            shuffle(nodes)  # Shuffle nodes so we don't always have the same order
+            random.shuffle(nodes)  # Shuffle nodes to switch up the order
             for node in nodes:
                 walk = self.henhoe2vec_walk(walk_length=walk_length, start_node=node)
                 walks.append(walk)

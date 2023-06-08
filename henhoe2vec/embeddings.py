@@ -1,5 +1,6 @@
 from gensim.models import word2vec as w2v
 import utils
+from pathlib import Path
 
 
 def generate_embeddings(
@@ -28,10 +29,10 @@ def generate_embeddings(
         Whether to print status messages. Default is True.
     """
     # Generate embeddings
-    walks = [map(str, walk) for walk in walks]
+    walks = [list(map(str, walk)) for walk in walks]
     w2v_model = w2v.Word2Vec(
         walks,
-        size=dimensions,
+        vector_size=dimensions,
         window=window_size,
         epochs=epochs,
         min_count=0,
@@ -41,12 +42,12 @@ def generate_embeddings(
 
     # Save embeddings
     output_dir = utils.clean_output_directory(output_dir)
-    output_emb = output_dir.join("henhoe2vec_results.emb")
-    w2v_model.save_word2vec_format(output_emb)
+    output_emb = output_dir.joinpath("henhoe2vec_results.emb")
+    w2v_model.wv.save_word2vec_format(output_emb)
     if verbose:
         print(f"[STATUS] Saved embeddings to {output_emb}")
 
-    output_csv = output_dir.join("henhoe2vec_results.csv")
+    output_csv = output_dir.joinpath("henhoe2vec_results.csv")
     embedding_df = utils.emb_to_pandas(output_emb)
     embedding_df.to_csv(output_csv, sep="\t", header=False)
     if verbose:

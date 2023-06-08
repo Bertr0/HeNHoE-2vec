@@ -210,7 +210,13 @@ def main(
     """
     start = time.time()
     # Parse multilayer network
-    N_nx = utils.parse_multilayer_edgelist(input_csv, is_directed)
+    if verbose:
+        N_nx = utils.timed_invoke(
+            "parsing edgelist",
+            lambda: utils.parse_multilayer_edgelist(input_csv, is_directed),
+        )
+    else:
+        N_nx = utils.parse_multilayer_edgelist(input_csv, is_directed)
 
     # Create HenHoe2vec object
     hh2v = henhoe2vec_walks.HenHoe2vec(N_nx, is_directed, p, q, s)
@@ -218,7 +224,8 @@ def main(
     # Preprocess transition probabilities
     if verbose:
         utils.timed_invoke(
-            "preprocessing transition probabilities", hh2v.preprocess_transition_probs()
+            "preprocessing transition probabilities",
+            lambda: hh2v.preprocess_transition_probs(),
         )
     else:
         hh2v.preprocess_transition_probs()
@@ -226,7 +233,8 @@ def main(
     # Generate random walks
     if verbose:
         walks = utils.timed_invoke(
-            "generating random walks", hh2v.simulate_walks(num_walks, walk_length)
+            "generating random walks",
+            lambda: hh2v.simulate_walks(num_walks, walk_length),
         )
     else:
         walks = hh2v.simulate_walks(num_walks, walk_length)
@@ -235,13 +243,20 @@ def main(
     if verbose:
         utils.timed_invoke(
             "learning and saving embeddings",
-            embeddings.generate_embeddings(
+            lambda: embeddings.generate_embeddings(
                 walks, output_dir, dims, window_size, epochs, workers, verbose
             ),
         )
     else:
         embeddings.generate_embeddings(
             walks, output_dir, dims, window_size, epochs, workers, verbose
+        )
+
+    finish = time.time()
+    if verbose:
+        print(
+            f"Completed multilayer network embedding in {finish - start} seconds."
+            f" See results in {output_dir}."
         )
 
 
