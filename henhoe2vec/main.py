@@ -1,7 +1,7 @@
 import argparse
 import time
-from utils import parse_multilayer_edgelist
-import henhoe2vec
+import utils
+import henhoe2vec_walks
 import embeddings
 
 
@@ -14,80 +14,7 @@ def parse_args():
     parser.add_argument(
         "--input",
         type=str,
-        help="Path to the multilayer edge list of the network to be embedded.",
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        help="Path of the output directory where the embedding files shall be saved.",
-    )
-
-    parser.add_argument(
-        "--dimensions",
-        type=int,
-        default=128,
-        help="The dimensionality of the embeddings.",
-    )
-
-    parser.add_argument(
-        "--walk-length", type=int, default=20, help="Length of each random walk."
-    )
-
-    parser.add_argument(
-        "--num-walks",
-        type=int,
-        default=10,
-        help="Number of random walks to simulate for each node.",
-    )
-
-    parser.add_argument(
-        "--window-size", type=int, default=10, help="Context size for optimization."
-    )
-
-    parser.add_argument(
-        "--p",
-        type=float,
-        default=1,
-        help="Return parameter p from the node2vec algorithm.",
-    )
-
-    parser.add_argument(
-        "--q",
-        type=float,
-        default=0.5,
-        help="In-out parameter q from the node2vec algorithm.",
-    )
-
-    parser.add_argument(
-        "--s",
-        nargs="*",
-        default=[],
-        help=(
-            "The type-switching parameter(s) of the HeNHoE-2vec algorithm. If the"
-            " probability to switch between layers should be the same for all pairs"
-            " of layers, pass a single float. We might want to have"
-            " different probabilities for switching between specific layers. In"
-            " this case, pass the names of layer pairs followed by their switching"
-            " parameters, sperarated by whitespaces, e.g., 'layer1 layer2 0.5"
-            " layer2 layer1 0.7'. Note that layer pairs are directed."
-        ),
-    )
-
-    parser.add_argument(
-        "--default-s",
-        type=float,
-        default=None,
-        help=(
-            "Default switching parameter for layer pairs which are not specified"
-            " in the --s argument."
-        ),
-    )
-
-    parser.add_argument("--epochs", default=1, type=int, help="Number of epochs in SGD")
-
-    parser.add_argument(
-        "--workers", type=int, default=8, help="Number of parallel workers (threads)."
+        help="Path to the multilayer edge list (csv) of the network to be embedded.",
     )
 
     parser.add_argument(
@@ -96,55 +23,244 @@ def parse_args():
         help="Pass this argument if the network is directed.",
     )
 
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        help="Path of the output directory where the embedding files will be saved.",
+    )
+
+    parser.add_argument(
+        "--dimensions",
+        type=int,
+        default=128,
+        help="The dimensionality of the embeddings. Default is 128.",
+    )
+
+    parser.add_argument(
+        "--walk-length",
+        type=int,
+        default=20,
+        help="Length of each random walk. Default is 20.",
+    )
+
+    parser.add_argument(
+        "--num-walks",
+        type=int,
+        default=10,
+        help="Number of random walks to simulate for each node. Default is 10.",
+    )
+
+    parser.add_argument(
+        "--p",
+        type=float,
+        default=1.0,
+        help="Return parameter p from the node2vec algorithm. Default is 1.",
+    )
+
+    parser.add_argument(
+        "--q",
+        type=float,
+        default=0.5,
+        help="In-out parameter q from the node2vec algorithm. Default is 0.5.",
+    )
+
+    parser.add_argument(
+        "--s",
+        type=float,
+        default=1.0,
+        help=(
+            "Default switching parameter for layer pairs which are not specified"
+            " in the --s-dict argument. Default is 1."
+        ),
+    )
+
+    parser.add_argument(
+        "--s-dict",
+        nargs="*",
+        default=[],
+        help=(
+            "This argument allows to specify a switching parameter for specific layer"
+            " pairs in a dict-like manner. Pass the names of layer pairs followed by"
+            " their switching parameters, separated by whitespaces. E.g., if the"
+            " switching parameter from layer1 to layer2 is 0.5 and the switching"
+            " parameter from layer2 to layer1 is 0.7, you would pass 'layer1 layer2"
+            " 0.5 layer2 layer1 0.7'. Note that layer pairs are directed. For all layer"
+            " pairs which are not specified here, the default parameter --s is adopted."
+        ),
+    )
+
+    parser.add_argument(
+        "--window-size",
+        type=int,
+        default=10,
+        help="Context size for the word2vec optimization. Default is 10.",
+    )
+
+    parser.add_argument(
+        "--epochs", default=1, type=int, help="Number of epochs in SGD. Default is 1."
+    )
+
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=8,
+        help="Number of parallel workers (threads). Default is 8.",
+    )
+
     return parser.parse_args()
 
 
-def parse_switching_param(s, default_s):
+def parse_switching_param(s, s_dict):
     """
-    Parse the switching arguments s and default-s passed into the script.
+    Parse the switching arguments s and s-dict passed as script arguments.
 
     Parameters
     ----------
-    s : list or None
-            Argument s passed into the script.
-    default-s : float
-            Argument default-s passed into the script.
+    s : float
+        The default switching parameter `s`. Can be None if ALL possible layer pairs are
+        specified in `s_dict`.
+    s_dict : list
+        List specifying the switching parameter for specific layer pairs.
 
     Returns
     -------
-    float or dict
-            s and default-s parsed into a float or dict.
+    dict
+        `s` and `s_dict` parsed as a dict. The default switching parameter `s` is
+        specified as the entry {"default" : s} in the returned dict.
     """
-    # No values passed for s
-    if not s:
-        return default_s
-    # Single value passed for s
-    if len(s) == 1:
-        if default_s:
-            print(f"[WARNING] Both s and default-s were set. Using s: {s[0]}")
-        return float(s[0])
+    switching_dict = {}
+    # Default switching parameter
+    if s:
+        switching_dict["default"] = s
+
+    while len(s_dict) > 0:
+        triple = s_dict[:3]
+        s_dict = s_dict[3:]
+        try:
+            switching_dict[(triple[0], triple[1])] = float(triple[2])
+        except:
+            raise ValueError(
+                "[ERROR] Argument --s-dict has the wrong form. Should consist of"
+                " 'layer layer s' triples, e.g., 'layer1 layer2 0.5 layer2 layer1 0.7'."
+            )
+
+    return switching_dict
+
+
+def main(
+    input_csv,
+    output_dir,
+    is_directed=False,
+    dims=128,
+    walk_length=20,
+    num_walks=10,
+    p=1.0,
+    q=0.5,
+    s=1.0,
+    window_size=10,
+    epochs=1,
+    workers=8,
+    verbose=True,
+):
+    """
+    Main method to embed the nodes of a HeNHoE (multilayer) network using the
+    HeNHoE-2vec algorithm. Results are saved as .emb and .csv files.
+
+    Parameters
+    ----------
+    input_csv : str
+        Path to the multilayer edge list (csv) of the network to be embedded.
+    output_dir : str
+        Path of the output directory where the embedding files will be saved.
+    is_directed : bool
+        Whether the network is directed. Default is False.
+    dims : int
+        The dimensionality of the embeddings. Default is 128.
+    walk_length : int
+        Length of each random walk. Default is 20.
+    num_walks : int
+        Number of random walks to simulate for each node. Default is 10.
+    p : float
+        The return parameter `p` from the node2vec algorithm. Default is 1.
+    q : float
+        The in-out parameter `q` from the node2vec algorithm. Default is 0.5.
+    s : float or dict
+        The type-switching parameter(s) of the HeNHoE-2vec algorithm. There are two
+        modes:
+        Simple switching: If the probability to switch between layers should be the
+        same for all pairs of layers, passing a single float suffices.
+        Versus specific switching: We might want to have different probabilities for
+        switching between specific layers. In this case, we can pass a dict of the
+        form {("layer1","layer2") : 0.5, ("layer2","layer1") : 0.2, "default" : 1}.
+        Note that the layer pairs are directed, i.e., the switching parameter from
+        layer1 to layer2 may be different than the switching parameter from layer2
+        to layer1. The "default" switching parameter is used for layer pairs which
+        don't have an explicit entry in the dict.
+        The switching modes "multiple switching" and "special node switching" are
+        special cases of "versus specific switching" and are therefore not explicitly
+        implemented here.
+    window_size : int
+        Context size for the word2vec optimization. Default is 10.
+    epochs : int
+        Number of epochs in SGD. Default is 1.
+    workers : int
+        Number of parallel workers (threads). Default is 8.
+    verbose : bool
+        Whether to print status messages. Default is True.
+    """
+    start = time.time()
+    # Parse multilayer network
+    N_nx = utils.parse_multilayer_edgelist(input_csv, is_directed)
+
+    # Create HenHoe2vec object
+    hh2v = henhoe2vec_walks.HenHoe2vec(N_nx, is_directed, p, q, s)
+
+    # Preprocess transition probabilities
+    if verbose:
+        utils.timed_invoke(
+            "preprocessing transition probabilities", hh2v.preprocess_transition_probs()
+        )
     else:
-        switching_dict = {}
-        while len(s) > 0:
-            triple = s[:3]
-            s = s[3:]
-            try:
-                switching_dict[(triple[0], triple[1])] = float(triple[2])
-            except:
-                raise ValueError(
-                    f"[ERROR] Argument --s has the wrong form. Should be a single float"
-                    f" or consist of 'layer layer s' triples, e.g., 'layer1 layer2 0.5"
-                    f" layer2 layer1 0.7'."
-                )
-        return switching_dict
+        hh2v.preprocess_transition_probs()
+
+    # Generate random walks
+    if verbose:
+        walks = utils.timed_invoke(
+            "generating random walks", hh2v.simulate_walks(num_walks, walk_length)
+        )
+    else:
+        walks = hh2v.simulate_walks(num_walks, walk_length)
+
+    # Learn and save embeddings
+    if verbose:
+        utils.timed_invoke(
+            "learning and saving embeddings",
+            embeddings.generate_embeddings(
+                walks, output_dir, dims, window_size, epochs, workers, verbose
+            ),
+        )
+    else:
+        embeddings.generate_embeddings(
+            walks, output_dir, dims, window_size, epochs, workers, verbose
+        )
 
 
 if __name__ == "__main__":
     args = parse_args()
-    s = parse_switching_param(args.s, args.default_s)
-
-    N_nx = parse_multilayer_edgelist(args.input, args.is_directed)
-    N = henhoe2vec.HenHoe2vec(N_nx, args.is_directed, args.p, args.q, s)
-    N.preprocess_transition_probs()
-    walks = N.simulate_walks(args.num_walks, args.walk_length)
-    embeddings.generate_embeddings(walks, args.output)
+    # Parse arguments s and s-dict
+    s = parse_switching_param(args.s, args.s_dict)
+    main(
+        input_csv=args.input,
+        output_dir=args.output_dir,
+        is_directed=args.is_directed,
+        dims=args.dimensions,
+        walk_length=args.walk_length,
+        num_walks=args.num_walks,
+        p=args.p,
+        q=args.q,
+        s=s,
+        window_size=args.window_size,
+        epochs=args.epochs,
+        workers=args.workers,
+        verbose=True,
+    )

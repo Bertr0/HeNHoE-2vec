@@ -53,9 +53,9 @@ class HenHoe2vec:
             layer1 to layer2 may be different than the switching parameter from layer2
             to layer1. The "default" switching parameter is used for layer pairs which
             don't have an explicit entry in the dict.
-            The switching modes "multiple switching" and "special node switching" (which
-            we don't explicitly implement here) are special cases of "versus specific
-            switching".
+            The switching modes "multiple switching" and "special node switching" are
+            special cases of "versus specific switching" and are therefore not
+            explicitly implemented here.
 
         Returns
         -------
@@ -81,20 +81,15 @@ class HenHoe2vec:
             self.s = {"default": s}
         elif type(s) == dict:
             self.s = s
-            if not "default" in self.s:
-                raise ValueError(
-                    f"[ERROR] The dict of switching parameters s must contain a"
-                    f" 'default' entry."
-                )
         else:
             raise TypeError(
                 f"[ERROR] Invalid type for argument s. Should be float or dict but"
                 f" is {type(s)}."
             )
 
-    # --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     # RANDOM WALKS
-    # --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     def henhoe2vec_walk(self, walk_length, start_node):
         """
         Simulate a random walk of length `walk_length` starting from `start_node`.
@@ -167,9 +162,9 @@ class HenHoe2vec:
 
         return walks
 
-    # --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     # CALCULATE TRANSITION PROBABILITIES
-    # --------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     def get_node_trans_probs(self, node):
         """
         Using alias sampling, calculate the discrete transition probability distribution
@@ -191,7 +186,7 @@ class HenHoe2vec:
         N = self.N
         s = self.s
 
-        # Unnormalized transition probabilites based on edge weights
+        # Unnormalized transition probabilities based on edge weights
         unnormalized_probs = []
         for nbr in sorted(N.neighbors(node)):
             src_layer = N.nodes[node]["layer"]
@@ -248,7 +243,7 @@ class HenHoe2vec:
         q = self.q
         s = self.s
 
-        # Unnormalized transition probabilites
+        # Unnormalized transition probabilities
         unnormalized_probs = []
         for nbr in sorted(N.neighbors(current)):
             src_layer = N.nodes[current]["layer"]

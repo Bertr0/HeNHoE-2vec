@@ -76,14 +76,16 @@ def timed_invoke(action_desc, method):
     object
         The return object of the method.
     """
-    print(f"Started {action_desc}...")
+    print(f"[STATUS] Started {action_desc}...")
     start = time.time()
     try:
         output = method()
-        print(f"Finished {action_desc} in {int(time.time() - start)} seconds")
+        print(f"[STATUS] Finished {action_desc} in {int(time.time() - start)} seconds")
         return output
     except Exception:
-        print(f"Exception while {action_desc} after {int(time.time() - start)} seconds")
+        print(
+            f"[ERROR] Exception while {action_desc} after {int(time.time() - start)} seconds"
+        )
         raise
 
 
