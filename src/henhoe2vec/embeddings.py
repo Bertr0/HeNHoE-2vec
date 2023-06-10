@@ -1,6 +1,5 @@
 from gensim.models import word2vec as w2v
-import utils
-from pathlib import Path
+from . import utils
 
 
 def generate_embeddings(
@@ -43,12 +42,12 @@ def generate_embeddings(
     # Save embeddings
     output_dir = utils.clean_output_directory(output_dir)
     output_emb = output_dir.joinpath("henhoe2vec_results.emb")
-    w2v_model.wv.save_word2vec_format(output_emb)
+    w2v_model.wv.save_word2vec_format(output_emb, total_vec=dimensions)
     if verbose:
         print(f"[STATUS] Saved embeddings to {output_emb}")
 
     output_csv = output_dir.joinpath("henhoe2vec_results.csv")
-    embedding_df = utils.emb_to_pandas(output_emb)
+    embedding_df = utils.emb_to_dataframe(output_emb)
     embedding_df.to_csv(output_csv, sep="\t", header=False)
     if verbose:
         print(f"[STATUS] Saved embeddings to {output_csv}")

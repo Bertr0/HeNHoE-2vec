@@ -15,29 +15,32 @@ def alias_setup(probs):
 
     Returns
     -------
-    J : list of ints
+    J : np.array of ints
         The alias table.
-    q : list of floats
+    q : np.array of floats
         The probability table.
     """
     K = len(probs)
     q = np.zeros(K)
     J = np.zeros(K, dtype=int)
 
-    # Sort the data into the outcomes with probabilities
-    # that are larger and smaller than 1/K.
+    # Sort the data into the outcomes with probabilities that are larger and smaller
+    # than 1/K.
     smaller = []
     larger = []
     for kk, prob in enumerate(probs):
+        if prob < 0:
+            raise ValueError(
+                f"[ERROR]: probs must all be non-negative but probs[{kk}] is {probs}."
+            )
         q[kk] = K * prob
         if q[kk] < 1.0:
             smaller.append(kk)
         else:
             larger.append(kk)
 
-    # Loop though and create little binary mixtures that
-    # appropriately allocate the larger outcomes over the
-    # overall uniform mixture.
+    # Loop through and create little binary mixtures that appropriately allocate the
+    # larger outcomes over the overall uniform mixture.
     while len(smaller) > 0 and len(larger) > 0:
         small = smaller.pop()
         large = larger.pop()
@@ -59,9 +62,9 @@ def alias_draw(J, q):
 
     Parameters
     ----------
-    J : list of ints
+    J : np.array of ints
         The alias table.
-    q : list of floats
+    q : np.array of floats
         The probability table.
 
     Returns
@@ -74,8 +77,8 @@ def alias_draw(J, q):
     # Draw from the overall uniform mixture.
     kk = int(np.floor(np.random.rand() * K))
 
-    # Draw from the binary mixture, either keeping the
-    # small one, or choosing the associated larger one.
+    # Draw from the binary mixture, either keeping the small one, or choosing the
+    # associated larger one.
     if np.random.rand() < q[kk]:
         return kk
     else:

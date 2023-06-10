@@ -1,8 +1,8 @@
 import argparse
 import time
-import utils
-import henhoe2vec_walks
-import embeddings
+from . import utils
+from . import henhoe2vec_walks
+from . import embeddings
 
 
 def parse_args():
@@ -152,6 +152,11 @@ def parse_switching_param(s, s_dict):
                 "[ERROR] Argument --s-dict has the wrong form. Should consist of"
                 " 'layer layer s' triples, e.g., 'layer1 layer2 0.5 layer2 layer1 0.7'."
             )
+
+    if len(switching_dict) == 0:
+        raise ValueError(
+            "[ERROR] Arguments --s and --s-dict cannot both be empty/None."
+        )
 
     return switching_dict
 

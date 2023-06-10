@@ -96,7 +96,7 @@ def timed_invoke(action_desc, method):
         raise
 
 
-def emb_to_pandas(emb_file):
+def emb_to_dataframe(emb_file):
     """
     Convert an embedding file, as output from a trained word2vec model, to a pandas
     DataFrame.
@@ -112,8 +112,18 @@ def emb_to_pandas(emb_file):
         word2vec embedding as a dataframe.
     """
     embedding = pd.read_csv(
-        emb_file, delim_whitespace=True, skiprows=1, header=None, index_col=0
+        emb_file, delim_whitespace=True, skiprows=1, header=None, index_col=False
     )
+
+    # The node names are split up across the first two columns because they are tuples.
+    # We therefore join the first two columns.
+    if isinstance(embedding[1].iloc[0], str):
+        node_column = embedding[0] + embedding[1]
+        embedding[0] = node_column
+        embedding.drop(columns=1, inplace=True)
+
+    # Set first column (node names) as index column
+    embedding.set_index(0, inplace=True)
     embedding.sort_index(inplace=True)
 
     return embedding

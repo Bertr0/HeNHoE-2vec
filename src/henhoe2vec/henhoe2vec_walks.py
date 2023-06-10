@@ -1,5 +1,7 @@
 import random
-from alias_sampling import alias_setup, alias_draw
+
+# from alias_sampling import alias_setup, alias_draw
+from .alias_sampling import alias_setup, alias_draw
 
 
 class HenHoe2vec:
@@ -261,13 +263,16 @@ class HenHoe2vec:
             # Neighbor is on a different layer
             else:
                 # Get switching parameter
-                try:
-                    switch_param = s["default"]
-                except:
-                    raise ValueError(
-                        f"[ERROR] The dict of switching parameters s must contain a"
-                        f" 'default' entry."
-                    )
+                if (src_layer, trgt_layer) in s:
+                    switch_param = s[(src_layer, trgt_layer)]
+                else:
+                    try:
+                        switch_param = s["default"]
+                    except:
+                        raise ValueError(
+                            f"[ERROR] The dict of switching parameters s must contain a"
+                            f" 'default' entry."
+                        )
 
                 if nbr == previous:
                     unnormalized_probs.append(weight / (p * switch_param))  # Return
