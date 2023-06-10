@@ -156,7 +156,7 @@ def parse_switching_param(s, s_dict):
     return switching_dict
 
 
-def henhoe2vec(
+def run(
     input_csv,
     output_dir,
     is_directed=False,
@@ -281,7 +281,7 @@ if __name__ == "__main__":
     args = parse_args()
     # Parse arguments s and s-dict
     s = parse_switching_param(args.s, args.s_dict)
-    henhoe2vec(
+    run(
         input_csv=args.input,
         output_dir=args.output_dir,
         is_directed=args.is_directed,
