@@ -6,12 +6,12 @@ _Note_: HeNHoE networks are analogous to multilayer networks: in HeNHoE networks
 ## Installation
 Install the package from PyPI by running the following command:
 ```
-pip install henhoe2vec
+$ pip install henhoe2vec
 ```
 
 Alternatively, clone this repository by running
 ```
-git clone git@github.com:Bertr0/HeNHoE-2vec.git
+$ git clone git@github.com:Bertr0/HeNHoE-2vec.git
 ```
 
 and then install the package by running `pip install .` from the root of the repository.
@@ -37,11 +37,11 @@ hh2v.henhoe2vec.run(input_csv, output_dir)
 ### As a Python Script
 To run HeNHoE-2vec as a script, clone this repositiory using
 ```
-git clone git@github.com:Bertr0/HeNHoE-2vec.git
+$ git clone git@github.com:Bertr0/HeNHoE-2vec.git
 ```
 , install the requirements found in `requirements.txt` and run the following command from the root of the repository:
 ```
-python3 -m src.henhoe2vec.henhoe2vec --input <input_path> --output_dir <output_dir_path>
+$ python3 -m src.henhoe2vec.henhoe2vec --input <input_path> --output_dir <output_dir_path>
 ```
 
 This will generate node embedddings for the nodes of the network specified by the mutlilayer edge list saved at `<input_path>` and saves the embedding files in `<output_dir>`.
