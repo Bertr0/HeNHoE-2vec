@@ -14,7 +14,10 @@ def parse_args():
     parser.add_argument(
         "--input",
         type=str,
-        help="Path to the multilayer edge list (csv) of the network to be embedded.",
+        help=(
+            "Path to the multilayer edge list of the network to be embedded (csv file"
+            " with tab delimiter, no header, no index)."
+        ),
     )
 
     parser.add_argument(
@@ -184,7 +187,8 @@ def run(
     Parameters
     ----------
     input_csv : str
-        Path to the multilayer edge list (csv) of the network to be embedded.
+        Path to the multilayer edge list of the network to be embedded (csv file with
+        tab delimiter, no header, no index).
     output_dir : str
         Path of the output directory where the embedding files will be saved.
     is_directed : bool
