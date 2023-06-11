@@ -19,4 +19,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=[
+        "pandas >= 1.2.0",
+        "numpy >= 1.22.0",
+        "networkx >= 2.5",
+        "gensim >= 4.3.0",
+    ],
 )

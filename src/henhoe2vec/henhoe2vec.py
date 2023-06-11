@@ -15,7 +15,7 @@ def parse_args():
         "--input",
         type=str,
         help=(
-            "Path to the multilayer edge list of the network to be embedded (csv file"
+            "Path to the multilayer edge list of the network to be embedded (.csv file"
             " with tab delimiter, no header, no index)."
         ),
     )
@@ -91,7 +91,7 @@ def parse_args():
         nargs="*",
         default=[],
         help=(
-            "This argument allows to specify a switching parameter for specific layer"
+            "Switching parameters for specific layer"
             " pairs in a dict-like manner. Pass the names of layer pairs followed by"
             " their switching parameters, separated by whitespaces. E.g., if the"
             " switching parameter from layer1 to layer2 is 0.5 and the switching"
