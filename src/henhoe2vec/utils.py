@@ -91,7 +91,8 @@ def timed_invoke(action_desc, method):
         return output
     except Exception:
         print(
-            f"[ERROR] Exception while {action_desc} after {int(time.time() - start)} seconds"
+            f"[ERROR] Exception while {action_desc} after {int(time.time() - start)}"
+            f" seconds"
         )
         raise
 
