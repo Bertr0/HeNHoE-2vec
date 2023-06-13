@@ -1,5 +1,5 @@
 ![GitHub](https://img.shields.io/github/license/Bertr0/HeNHoE-2vec)
-[![Tests](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml)
+[![Tests](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml/badge.svg)](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml)
 
 # HeNHoE-2vec
 A Python implementation of the HeNHoE-2vec algorithm by [Valentini et al.](https://arxiv.org/abs/2101.01425) for the embedding of networks with heterogeneous nodes and homogeneous edges (HeNHoE).
