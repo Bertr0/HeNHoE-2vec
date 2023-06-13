@@ -286,23 +286,24 @@ def run(
         )
 
 
-if __name__ == "__main__":
-    args = parse_args()
-    # Parse arguments s and s-dict
-    s = parse_switching_param(args.s, args.s_dict)
-    run(
-        input_csv=args.input,
-        output_dir=args.output_dir,
-        is_directed=args.is_directed,
-        edges_are_distance=args.edges_are_distance,
-        dims=args.dimensions,
-        walk_length=args.walk_length,
-        num_walks=args.num_walks,
-        p=args.p,
-        q=args.q,
-        s=s,
-        window_size=args.window_size,
-        epochs=args.epochs,
-        workers=args.workers,
-        verbose=True,
-    )
+def main():
+    if __name__ == "__main__":
+        args = parse_args()
+        # Parse arguments s and s-dict
+        s = parse_switching_param(args.s, args.s_dict)
+        run(
+            input_csv=args.input,
+            output_dir=args.output_dir,
+            is_directed=args.is_directed,
+            edges_are_distance=args.edges_are_distance,
+            dims=args.dimensions,
+            walk_length=args.walk_length,
+            num_walks=args.num_walks,
+            p=args.p,
+            q=args.q,
+            s=s,
+            window_size=args.window_size,
+            epochs=args.epochs,
+            workers=args.workers,
+            verbose=True,
+        )
