@@ -7,21 +7,26 @@ from pathlib import Path
 # --------------------------------------------------------------------------------------
 # PARSING AND CONVERSION FOR MULTILAYER NETWORKS
 # --------------------------------------------------------------------------------------
-def parse_multilayer_edgelist(multiedgelist, directed, edges_are_distance=False):
+def parse_multilayer_edgelist(
+    multiedgelist, directed, edges_are_distance=False, sep="\t", header=False
+):
     """
     Convert a multilayer edge list into a NetworkX Graph.
 
     Parameters
     ----------
     multiedgelist : str
-        Path to the multilayer edge list (csv file with tab delimiter, no header, no
-        index) to be converted. Consists of the columns 'source', 'source_layer',
-        'target', 'target_layer', 'weight'.
+        Path to the multilayer edge list (csv file , no index) to be converted. Consists
+        of the columns 'source', 'source_layer', 'target', 'target_layer', 'weight'.
     directed : bool
         Whether the network is directed or not.
     edges_are_distance : bool
         Whether edge weights indicate distance between nodes (opposed to
         weight/similarity). If network is unweighted, set to False. Default is False.
+    sep : str
+        Delimiter used in the multilayer edge list .csv file. Default is '\\t'.
+    header : bool
+        Whether the multilayer edge list .csv file has a header row. Default is False.
 
     Returns
     -------
@@ -38,8 +43,12 @@ def parse_multilayer_edgelist(multiedgelist, directed, edges_are_distance=False)
         G = nx.Graph()
 
     with open(multiedgelist) as IN:
-        for line in IN:
-            parts = line.strip().split()
+        for i, line in enumerate(IN):
+            # Skip header row
+            if header and i == 0:
+                continue
+
+            parts = line.strip().split(sep=sep)
             if len(parts) == 5:
                 source, source_layer, target, target_layer, weight = parts
             elif len(parts) == 4:
@@ -49,7 +58,8 @@ def parse_multilayer_edgelist(multiedgelist, directed, edges_are_distance=False)
                 raise ValueError(
                     f"[ERROR] mutliedgelist has too many columns: {len(parts)}. The"
                     f" columns should be 'source', 'source_layer', 'target',"
-                    f" 'target_layer', 'weight'."
+                    f" 'target_layer', 'weight'. Check that the multilayer edge list"
+                    f" does not have an index column."
                 )
 
             if edges_are_distance:

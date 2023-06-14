@@ -42,7 +42,9 @@ class TestHenHoe2vec:
         DIMS = 16
         df = pd.DataFrame.from_dict(test_data)
 
-        edgelist_path = helpers_testing.save_test_edgelist(df, tmp_path)
+        edgelist_path = helpers_testing.save_test_edgelist(
+            df, tmp_path, sep="\t", header=False
+        )
         output_path = tmp_path.joinpath("output/")
 
         # Run HeNHoE-2vec

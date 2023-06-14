@@ -17,10 +17,17 @@ class TestUtils:
         }
         df = pd.DataFrame.from_dict(test_data)
 
-        edgelist_path = helpers_testing.save_test_edgelist(df, tmp_path)
+        # tab delimiter and no header
+        edgelist_path = helpers_testing.save_test_edgelist(
+            df, tmp_path, sep="\t", header=False
+        )
 
         N_nx = utils.parse_multilayer_edgelist(
-            edgelist_path, directed=False, edges_are_distance=False
+            edgelist_path,
+            directed=False,
+            edges_are_distance=False,
+            sep="\t",
+            header=False,
         )
         num_nodes = 8
         num_edges = 6  # Graph is undirected, so edges 6 and 7 are equal
@@ -46,11 +53,14 @@ class TestUtils:
         num_nodes = 8
         num_edges = 7
 
-        edgelist_path = helpers_testing.save_test_edgelist(df, tmp_path)
+        # ',' delimiter and header
+        edgelist_path = helpers_testing.save_test_edgelist(
+            df, tmp_path, sep=",", header=True
+        )
 
         # Here we set edges_are_distance=True, so all weights should be inverted
         N_nx = utils.parse_multilayer_edgelist(
-            edgelist_path, directed=True, edges_are_distance=True
+            edgelist_path, directed=True, edges_are_distance=True, sep=",", header=True
         )
 
         assert N_nx.number_of_nodes() == num_nodes
