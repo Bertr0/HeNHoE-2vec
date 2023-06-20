@@ -36,10 +36,10 @@ import henho2vec as hh2v
 hh2v.henhoe2vec.run(input_csv, output_dir)
 ```
 
-`input_csv` is the path to the multilayer edge list of the network to be embedded (csv file with tab delimiter, no header, no index). `output_dir` is the path to the output directory where the embedding files will be saved. The `run()` method takes a bunch of other optional parameters which can be used to configure HeNHoE-2vec. A comprehensive overview of parameters can be found in the code documentation.
+`input_csv` is the path to the multilayer edge list of the network to be embedded (csv file with no index). `output_dir` is the path to the output directory where the embedding files will be saved. The `run()` method takes a bunch of other optional parameters which can be used to configure HeNHoE-2vec. A comprehensive overview of parameters can be found in the code documentation.
 
 ### As a Python Script
-To run HeNHoE-2vec as a script, clone this repositiory using
+To run HeNHoE-2vec as a script, clone this repository using
 ```
 $ git clone git@github.com:Bertr0/HeNHoE-2vec.git
 ```
@@ -48,24 +48,27 @@ $ git clone git@github.com:Bertr0/HeNHoE-2vec.git
 $ python3 -m src.henhoe2vec.henhoe2vec --input <input_path> --output_dir <output_dir_path>
 ```
 
-This will generate node embedddings for the nodes of the network specified by the mutlilayer edge list saved at `<input_path>` and saves the embedding files in `<output_dir>`.
+This will generate node embeddings for the nodes of the network specified by the multilayer edge list saved at `<input_path>` and saves the embedding files in `<output_dir>`.
 
 Run `python3 -m src.henhoe2vec.henhoe2vec --help` from the root of the repository to show an overview of all arguments taken by the script. The following table also shows an overview of all arguments:
 
 #### Script Arguments
 | Argument | Type | Description | Default Value |
 | -------- | ---- | ----------- | ------------- |
-| `--input` | str | Path to the multilayer edge list of the network to be embedded (.csv file with tab delimiter, no header, no index). | - |
+| `--input` | str | Path to the multilayer edge list of the network to be embedded (csv file with no index). | - |
+| `--sep` | str | Delimiter of the input csv edge list. | "\t" |
+| `--header` | store_true | Pass this argument if the input csv edge list has a header. | - |
+| `--output-name` | str | Name of the output .csv file (without suffix). | "embeddings" |
 | `--is-directed` | store_true | Pass this argument if the network is directed. | - |
 | `--edges-are-distances` | store_true | Pass this argument if edge weights indicate distance between nodes (opposed to weight/similarity). | - |
 | `--output_dir` | str | Path of the output directory where the embedding files will be saved. | - |
 | `--dimensions` | int | The dimensionality of the embeddings. | 128 |
 | `--walk-length` | int | Length of each random walk. | 20 |
-| `--num-walks` | int | Number of randwom walks to simulate for each node. | 10 |
+| `--num-walks` | int | Number of random walks to simulate for each node. | 10 |
 | `--p` | float | Return parameter `p` from the node2vec algorithm. | 1.0 |
-| `--q` | float | In-out parameter `q` from the node2vec algoritym. | 0.5 |
+| `--q` | float | In-out parameter `q` from the node2vec algorithm. | 0.5 |
 | `--s` | float | Default switching parameter for layer pairs which are not specified in the `--s-dict` argument. | 1.0 |
-| `--s-dict` | list | Switching parameters for specific layer pairs in a dict-like manner. Pass the names of layer pairs followed by their switching parameters, separated by whitespaces. E.g., if the switching parameter from `layer1` to `layer2` is `0.5` and the switching parameter from `layer2` to `layer1` is `0.7`, you would pass `layer1 layer2 0.5 layer2 layer1 0.7`. Note that layer pairs are directed. For all layer pairs which are not specified here, the default parameter `--s` is adopted. | empty list |
+| `--s-dict` | list | Switching parameters for specific layer pairs in a dict-like manner. Pass the names of layer pairs followed by their switching parameters, separated by white spaces. E.g., if the switching parameter from `layer1` to `layer2` is `0.5` and the switching parameter from `layer2` to `layer1` is `0.7`, you would pass `layer1 layer2 0.5 layer2 layer1 0.7`. Note that layer pairs are directed. For all layer pairs which are not specified here, the default parameter `--s` is adopted. | empty list |
 | `--window-size` | int | Context size for the word2vec optimization. | 10 |
 | `--epochs` | int | Number of epochs in SGD. | 1 |
 | `--workers` | int | Number of parallel workers (threads). | 8 |

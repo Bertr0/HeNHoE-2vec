@@ -15,9 +15,28 @@ def parse_args():
         "--input",
         type=str,
         help=(
-            "Path to the multilayer edge list of the network to be embedded (.csv file"
-            " with tab delimiter, no header, no index)."
+            "Path to the multilayer edge list of the network to be embedded (csv file"
+            " with no index)."
         ),
+    )
+
+    parser.add_argument(
+        "--sep", type=str, help=("Delimiter of the input csv edge list."), default="\t"
+    )
+
+    parser.add_argument(
+        "--header",
+        type="store_true",
+        help=("Pass this argument if the input csv edge list has a header."),
+    )
+
+    parser.add_argument(
+        "--output-name",
+        type=str,
+        help=(
+            "Name of the output .csv file (without suffix). Default is 'embeddings'."
+        ),
+        default="embeddings",
     )
 
     parser.add_argument(
@@ -36,7 +55,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--output_dir",
+        "--output-dir",
         type=str,
         help="Path of the output directory where the embedding files will be saved.",
     )
@@ -167,6 +186,9 @@ def parse_switching_param(s, s_dict):
 def run(
     input_csv,
     output_dir,
+    sep="\t",
+    header=False,
+    output_name="embeddings",
     is_directed=False,
     edges_are_distance=False,
     dims=128,
@@ -188,9 +210,15 @@ def run(
     ----------
     input_csv : str
         Path to the multilayer edge list of the network to be embedded (csv file with
-        tab delimiter, no header, no index).
+        no index).
     output_dir : str
         Path of the output directory where the embedding files will be saved.
+    sep : str
+        Delimiter of the input csv edge list. Default is "\\t".
+    header : bool
+        Whether the input csv edge list has a header. Default is False.
+    output_name : str
+        Name of the output .csv file (without suffix). Default is "embeddings".
     is_directed : bool
         Whether the network is directed. Default is False.
     edges_are_distance : bool
@@ -236,7 +264,7 @@ def run(
         N_nx = utils.timed_invoke(
             "parsing edgelist",
             lambda: utils.parse_multilayer_edgelist(
-                input_csv, is_directed, edges_are_distance
+                input_csv, is_directed, edges_are_distance, sep=sep, header=header
             ),
         )
     else:
@@ -270,12 +298,26 @@ def run(
         utils.timed_invoke(
             "learning and saving embeddings",
             lambda: embeddings.generate_embeddings(
-                walks, output_dir, dims, window_size, epochs, workers, verbose
+                walks,
+                output_dir,
+                output_name,
+                dims,
+                window_size,
+                epochs,
+                workers,
+                verbose,
             ),
         )
     else:
         embeddings.generate_embeddings(
-            walks, output_dir, dims, window_size, epochs, workers, verbose
+            walks,
+            output_dir,
+            output_name,
+            dims,
+            window_size,
+            epochs,
+            workers,
+            verbose,
         )
 
     finish = time.time()
@@ -294,6 +336,9 @@ def main():
         run(
             input_csv=args.input,
             output_dir=args.output_dir,
+            sep=args.sep,
+            header=args.header,
+            output_name=args.output_name,
             is_directed=args.is_directed,
             edges_are_distance=args.edges_are_distance,
             dims=args.dimensions,
