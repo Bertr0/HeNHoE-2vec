@@ -1,4 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![PyPI](https://img.shields.io/pypi/v/:henhoe2vec)
 [![Tests](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml/badge.svg)](https://github.com/Bertr0/HeNHoE-2vec/actions/workflows/tests.yml)
 
 # HeNHoE-2vec
