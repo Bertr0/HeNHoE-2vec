@@ -323,8 +323,8 @@ def run(
     finish = time.time()
     if verbose:
         print(
-            f"Completed multilayer network embedding in {finish - start} seconds."
-            f" See results in {output_dir}."
+            f"[STATUS] Completed multilayer network embedding in {finish - start}"
+            f" seconds. See results in {output_dir}."
         )
 
 
