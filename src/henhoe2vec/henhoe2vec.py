@@ -26,12 +26,12 @@ def parse_args():
 
     parser.add_argument(
         "--header",
-        type="store_true",
+        action="store_true",
         help=("Pass this argument if the input csv edge list has a header."),
     )
 
     parser.add_argument(
-        "--output-name",
+        "--output_name",
         type=str,
         help=(
             "Name of the output .csv file (without suffix). Default is 'embeddings'."
@@ -40,13 +40,13 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--is-directed",
+        "--is_directed",
         action="store_true",
         help="Pass this argument if the network is directed.",
     )
 
     parser.add_argument(
-        "--edges-are-distance",
+        "--edges_are_distance",
         action="store_true",
         help=(
             "Pass this argument if edge weights indicate distance between nodes"
@@ -55,7 +55,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--output-dir",
+        "--output_dir",
         type=str,
         help="Path of the output directory where the embedding files will be saved.",
     )
@@ -68,14 +68,14 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--walk-length",
+        "--walk_length",
         type=int,
         default=20,
         help="Length of each random walk. Default is 20.",
     )
 
     parser.add_argument(
-        "--num-walks",
+        "--num_walks",
         type=int,
         default=10,
         help="Number of random walks to simulate for each node. Default is 10.",
@@ -106,7 +106,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--s-dict",
+        "--s_dict",
         nargs="*",
         default=[],
         help=(
@@ -121,7 +121,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--window-size",
+        "--window_size",
         type=int,
         default=10,
         help="Context size for the word2vec optimization. Default is 10.",
@@ -329,26 +329,25 @@ def run(
 
 
 def main():
-    if __name__ == "__main__":
-        args = parse_args()
-        # Parse arguments s and s-dict
-        s = parse_switching_param(args.s, args.s_dict)
-        run(
-            input_csv=args.input,
-            output_dir=args.output_dir,
-            sep=args.sep,
-            header=args.header,
-            output_name=args.output_name,
-            is_directed=args.is_directed,
-            edges_are_distance=args.edges_are_distance,
-            dims=args.dimensions,
-            walk_length=args.walk_length,
-            num_walks=args.num_walks,
-            p=args.p,
-            q=args.q,
-            s=s,
-            window_size=args.window_size,
-            epochs=args.epochs,
-            workers=args.workers,
-            verbose=True,
-        )
+    args = parse_args()
+    # Parse arguments s and s-dict
+    s = parse_switching_param(args.s, args.s_dict)
+    run(
+        input_csv=args.input,
+        output_dir=args.output_dir,
+        sep=args.sep,
+        header=args.header,
+        output_name=args.output_name,
+        is_directed=args.is_directed,
+        edges_are_distance=args.edges_are_distance,
+        dims=args.dimensions,
+        walk_length=args.walk_length,
+        num_walks=args.num_walks,
+        p=args.p,
+        q=args.q,
+        s=s,
+        window_size=args.window_size,
+        epochs=args.epochs,
+        workers=args.workers,
+        verbose=True,
+    )
