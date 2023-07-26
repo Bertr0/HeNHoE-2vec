@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 # from alias_sampling import alias_setup, alias_draw
 from .alias_sampling import alias_setup, alias_draw
@@ -79,7 +80,7 @@ class HenHoe2vec:
         # Form: {(node1, node2) : (J, q)}
         self.transition_probs_edges = {}
 
-        if type(s) in [float, int]:
+        if type(s) in [float, int] or isinstance(s, np.floating):
             self.s = {"default": s}
         elif type(s) == dict:
             self.s = s
