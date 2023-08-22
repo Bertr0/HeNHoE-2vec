@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "henhoe2vec"
-version = "1.0.3"
+version = "1.0.4"
 description = "Implementation of the HeNHoE-2vec algorithm by Valentini et al. (2021)."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -37,4 +37,4 @@ dependencies = [
 dev = ["pytest", "build"]
 
 [project.urls]
-Repository = "https://github.com/Bertr0/HeNHoE-2vec"
+Repository = "https://github.com/RobertGiesler/HeNHoE-2vec"
