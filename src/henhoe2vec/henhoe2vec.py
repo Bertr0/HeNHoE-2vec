@@ -204,7 +204,8 @@ def run(
 ):
     """
     Main method to embed the nodes of a HeNHoE (multilayer) network using the
-    HeNHoE-2vec algorithm. Results are saved as .emb and .csv files.
+    HeNHoE-2vec algorithm. Results are saved as .emb and .csv files. Call this method if
+    you are using HeNHoE-2vec as a package.
 
     Parameters
     ----------
