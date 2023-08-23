@@ -55,12 +55,12 @@ Run `python3 -m src.henhoe2vec --help` from the root of the repository to show a
 #### Script Arguments
 | Argument | Type | Description | Default Value |
 | -------- | ---- | ----------- | ------------- |
-| `--input` | str | Path to the multilayer edge list of the network to be embedded (csv file with no index). | - |
+| `--input` | str | Path to the multilayer edge list of the network to be embedded (csv file with no index). The multilayer edge list must contain the columns 'source', 'source_layer', 'target', 'target_layer' in that order. For weighted networks, it must also contain the column 'weight'. Each row represents an edge. | - |
 | `--sep` | str | Delimiter of the input csv edge list. | "\t" |
 | `--header` | store_true | Pass this argument if the input csv edge list has a header. | - |
 | `--output_name` | str | Name of the output .csv file (without suffix). | "embeddings" |
 | `--is_directed` | store_true | Pass this argument if the network is directed. | - |
-| `--edges_are_distances` | store_true | Pass this argument if edge weights indicate distance between nodes (opposed to weight/similarity). | - |
+| `--edges_are_distances` | store_true | Pass this argument if edge weights indicate distance between nodes (as opposed to weight/similarity). | - |
 | `--output_dir` | str | Path of the output directory where the embedding files will be saved. | - |
 | `--dimensions` | int | The dimensionality of the embeddings. | 128 |
 | `--walk_length` | int | Length of each random walk. | 20 |
